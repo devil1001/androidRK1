@@ -5,13 +5,17 @@
     <Button
         android:id="@+id/firstCategory"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="AUTO"/>
+
     <Button
         android:id="@+id/secondCategory"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="IT"/>
     <Button
         android:id="@+id/thirdCategory"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="HEALTH"/>
 </LinearLayout>

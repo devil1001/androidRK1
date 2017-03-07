@@ -17,6 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".CategoryActivity" />
+        <service android:name=".NewsService"
+            android:enabled="true" />
     </application>
 
 </manifest>

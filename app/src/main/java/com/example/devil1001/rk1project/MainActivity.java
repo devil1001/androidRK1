@@ -7,10 +7,17 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Date;
+
+import ru.mail.weather.lib.News;
+import ru.mail.weather.lib.Storage;
+import ru.mail.weather.lib.Topics;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,26 +51,42 @@ public class MainActivity extends AppCompatActivity {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO
+                if (Storage.getInstance(MainActivity.this).loadCurrentTopic() != null) {
+                    Intent intent = new Intent(MainActivity.this, NewsService.class);
+                    intent.setAction(NewsService.NEWS_LOAD_ACTION);
+                    startService(intent);
+                }
             }
         });
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO
-                Toast.makeText(MainActivity.this, "Started", Toast.LENGTH_SHORT).show();
+                boolean updateEnable = Storage.getInstance(MainActivity.this).loadIsUpdateInBg();
+                Storage.getInstance(MainActivity.this).saveIsUpdateInBg(!updateEnable);
+                if (updateEnable) {
+                    Toast.makeText(MainActivity.this, "Started", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Stopped", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
-        // TODO: if on category choosen
     }
 
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
-
+                if (intent.getAction().equals(NewsService.NEWS_CHANGED_ACTION)) {
+                    News news = Storage.getInstance(MainActivity.this).getLastSavedNews();
+                    headerNews.setText(news.getTitle());
+                    dateNews.setText(DateFormat.format("MM/dd/yyyy", new Date(news.getDate())).toString());
+                    bodyNews.setText(news.getBody());
+                }
+                if (intent.getAction().equals(NewsService.NEWS_ERROR)) {
+                    Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                }
             }
         };
 
@@ -71,7 +94,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         final IntentFilter filter = new IntentFilter();
+        filter.addAction(NewsService.NEWS_CHANGED_ACTION);
+        filter.addAction(NewsService.NEWS_ERROR);
         LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(receiver, filter);
+        if (Storage.getInstance(MainActivity.this).loadCurrentTopic().equals("")) {
+            Storage.getInstance(MainActivity.this).saveCurrentTopic(Topics.IT);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = new Intent(this, NewsService.class);
+        intent.setAction(NewsService.NEWS_LOAD_ACTION);
+        startService(intent);
     }
 
     @Override

@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import ru.mail.weather.lib.Storage;
+import ru.mail.weather.lib.Topics;
+
 /**
  * Created by devil1001 on 07.03.17.
  */
@@ -29,19 +32,20 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         firstCategory.setOnClickListener(this);
         secondCategory.setOnClickListener(this);
         thirdCategory.setOnClickListener(this);
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.firstCategory:
-                //TODO
+                Storage.getInstance(CategoryActivity.this).saveCurrentTopic(Topics.AUTO);
                 break;
             case R.id.secondCategory:
-                //TODO
+                Storage.getInstance(CategoryActivity.this).saveCurrentTopic(Topics.IT);
                 break;
             case R.id.thirdCategory:
-                //TODO
+                Storage.getInstance(CategoryActivity.this).saveCurrentTopic(Topics.HEALTH);
                 break;
         }
         finish();
