@@ -100,6 +100,12 @@ public class MainActivity extends AppCompatActivity {
         if (Storage.getInstance(MainActivity.this).loadCurrentTopic().equals("")) {
             Storage.getInstance(MainActivity.this).saveCurrentTopic(Topics.IT);
         }
+        News news = Storage.getInstance(MainActivity.this).getLastSavedNews();
+        if (news != null) {
+            headerNews.setText(news.getTitle());
+            dateNews.setText(DateFormat.format("MM/dd/yyyy", new Date(news.getDate())).toString());
+            bodyNews.setText(news.getBody());
+        }
     }
 
     @Override
